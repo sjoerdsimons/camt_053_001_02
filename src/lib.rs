@@ -64,6 +64,8 @@ pub struct Balance {
     pub amount: Amount,
     #[serde(rename = "Dt")]
     pub date: Date,
+    #[serde(rename = "CdtDbtInd")]
+    pub credit_or_debit: String,
 }
 
 #[derive(Deserialize, Debug)]
