@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use camt_053_001_02::{Document, ISO20022Document};
+use camt_053_001_02::{CodeOrPropietary, Document, ISO20022Document};
 use clap::Parser;
 
 #[derive(Debug, clap::Parser)]
@@ -19,6 +19,12 @@ fn main() -> anyhow::Result<()> {
     let Document::BankToCustomerStatement(s) = d.document;
 
     println!("Creation date: {}", s.header.creation_date);
+    println!("Balances:");
+    for b in &s.statement.balances {
+        let CodeOrPropietary::Code(code) = &b.type_.code_or_proprietary.choice;
+        println!("{} - {} - {}", b.date.dt, b.type_.code(), b.amount.amount);
+    }
+
     println!("Entries:");
     for e in &s.statement.entries {
         println!("== {} ==", e.book_date.dt);

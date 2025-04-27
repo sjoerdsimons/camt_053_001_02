@@ -38,11 +38,57 @@ pub struct Header {
     #[serde(rename = "CreDtTm")]
     pub creation_date: DateTime<FixedOffset>,
 }
-
 #[derive(Deserialize, Debug)]
 pub struct Statement {
+    #[serde(rename = "Bal")]
+    pub balances: Vec<Balance>,
     #[serde(rename = "Ntry")]
     pub entries: Vec<Entry>,
+}
+
+impl Statement {
+    pub fn opening_balance(&self) -> Option<&Balance> {
+        self.balances.iter().find(|b| b.type_.code() == "OPBD")
+    }
+
+    pub fn closing_balance(&self) -> Option<&Balance> {
+        self.balances.iter().find(|b| b.type_.code() == "CLBD")
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Balance {
+    #[serde(rename = "Tp")]
+    pub type_: BalanceType,
+    #[serde(rename = "Amt")]
+    pub amount: Amount,
+    #[serde(rename = "Dt")]
+    pub date: Date,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct BalanceType {
+    #[serde(rename = "CdOrPrtry")]
+    pub code_or_proprietary: CodeOrPropietaryChoice,
+}
+
+impl BalanceType {
+    pub fn code(&self) -> &str {
+        let CodeOrPropietary::Code(code) = &self.code_or_proprietary.choice;
+        code
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CodeOrPropietaryChoice {
+    #[serde(rename = "$value")]
+    pub choice: CodeOrPropietary,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum CodeOrPropietary {
+    #[serde(rename = "Cd")]
+    Code(String),
 }
 
 #[derive(Deserialize, Debug)]
