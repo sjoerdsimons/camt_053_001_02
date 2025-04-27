@@ -1,0 +1,13 @@
+[package]
+name = "camt_053_001_02"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = { version = "0.4.40", features = ["serde"] }
+quick-xml = { version = "0.37.5", features = ["serialize"] }
+serde = { version = "1.0.219", features = ["derive"] }
+
+[dev-dependencies]
+anyhow = "1.0.98"
+clap = { version = "4.5.37", features = ["derive"] }
